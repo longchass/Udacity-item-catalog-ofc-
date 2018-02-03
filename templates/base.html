@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{% block title %}{% endblock title %}</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://apis.google.com/js/platform.js?onload=start"> </script>
+
+
+  {% block head %}{% endblock head %}
+</head>
+<body>
+
+    <div class="border-site bs-top"></div>
+    <div class="border-site bs-right"></div>
+    <div class="border-site bs-left"></div>
+    <div class="border-site bs-bottom"></div>
+
+    {% block content %}
+    {% endblock content %}
+
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/retina.min.js') }}"></script>
+    <script>
+    function signInCallback(authResult) {
+      if (authResult['code']) {
+        $('#login').attr('style','display:none');
+        $.ajax({
+          type: 'POST',
+          url: '/gconnect?state={{STATE}}',
+          processData: false,
+          data: authResult['code'],
+          contentType: 'application/octet-stream; charset=utf-8',
+          success: function(result) {
+            if (result) {
+              $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...');
+              setTimeout(function() {
+                window.location.href = "/catalog";
+              }, 4000);
+            } else if (authResult['error']) {
+              console.log('There was an error: ' + authResult['error']);
+            } else {
+              $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+            }
+          },
+          error: function(result) {
+            console.log('There was an error: ' + result);
+          }
+
+      }); } }
+    </script>
+</body>
+</html>
