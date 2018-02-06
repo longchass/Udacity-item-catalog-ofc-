@@ -251,11 +251,7 @@ def addItem():
 @login_required
 def deleteCategory(category_name):
     categoryToDelete = session.query(Category).filter_by(name=category_name).first()
-    creator = getUserInfo(categoryToDelete.user_id)
     user = getUserInfo(login_session['user_id'])
-    if creator.id != login_session['user_id']:
-        flash ("You cannot delete this Category. This Category belongs to %s" % creator.name)
-        return redirect(url_for('showCatalog'))
     if request.method =='POST':
         session.delete(categoryToDelete)
         session.commit()
@@ -264,17 +260,13 @@ def deleteCategory(category_name):
     else:
         return render_template('deletecategory.html',
                                 category=categoryToDelete)
-@app.route('/catalog/<path:category_name>/<path:item_name>/delete', methods=['GET', 'POST'])
+
+@app.route('/catalog/<path:category_id>/<path:item_name>/delete', methods=['GET', 'POST'])
 @login_required
-def deleteItem(category_name, item_name):
+def deleteItem(category_id, item_name):
+    category = session.query(Category).filter_by(id=category_id).first()
     itemToDelete = session.query(Items).filter_by(name=item_name).first()
-    category = session.query(Category).filter_by(name=category_name).first()
-    categories = session.query(Category).all()
-    creator = getUserInfo(categoryToDelete.user_id)
     user = getUserInfo(login_session['user_id'])
-    if creator.id != login_session['user_id']:
-        flash ("You cannot delete this item. This item belongs to %s" % creator.name)
-        return redirect(url_for('showCatalog'))
     if request.method =='POST':
         session.delete(itemToDelete)
         session.commit()
@@ -286,16 +278,12 @@ def deleteItem(category_name, item_name):
                                 item=itemToDelete)
 
 
-@app.route('/catalog/<path:category_name>/<path:item_name>/edit', methods=['GET', 'POST'])
+@app.route('/catalog/<path:category_id>/<path:item_name>/edit', methods=['GET', 'POST'])
 @login_required
-def editItem(category_name, item_name):
+def editItem(category_id, item_name):
+    category = session.query(Category).filter_by(id=category_id).first()
     editedItem = session.query(Items).filter_by(name=item_name).one()
-    categories = session.query(Category).all()
-    creator = getUserInfo(editedItem.user_id)
     user = getUserInfo(login_session['user_id'])
-    if creator.id != login_session['user_id']:
-        flash ("You cannot edit this item. This item belongs to %s" % creator.name)
-        return redirect(url_for('showCatalog'))
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
@@ -317,16 +305,13 @@ def editItem(category_name, item_name):
         return render_template('edititem.html',
                                 item=editedItem,
                                 categories=categories)
+
 @app.route('/catalog/<path:category_name>/edit', methods=['GET', 'POST'])
 @login_required
 def editCategory(category_name):
     editedCategory = session.query(Category).filter_by(name=category_name).first()
     category = session.query(Category).filter_by(name=category_name).first()
-    creator = getUserInfo(editedCategory.user_id)
     user = getUserInfo(login_session['user_id'])
-    if creator.id != login_session['user_id']:
-        flash ("You cannot edit this Category. This Category belongs to %s" % creator.name)
-        return redirect(url_for('showCatalog'))
     if request.method == 'POST':
         if request.form['name']:
             editedCategory.name = request.form['name']

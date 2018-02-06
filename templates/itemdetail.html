@@ -17,10 +17,10 @@
                     <img class="img-responsive" src="{{ item.picture }}" alt="{{ item.name }}">
                     <div class="caption-full">
                         <h6 class="pull-right padding-left-10">
-                            <a href = "{{url_for('deleteItem', category_name = item.category.name, item_name = item.name)}}">Delete</a>
+                            <a href = "{{url_for('deleteItem', category_id = item.category.id, item_name = item.name)}}">Delete</a>
                         </h6>
                         <h6 class="pull-right">
-                            <a href = "{{url_for('editItem', category_name = item.category.name, item_name = item.name)}}">Edit</a>
+                            <a href = "{{url_for('editItem', category_id = item.category.id, item_name = item.name)}}">Edit</a>
                         </h6>
                         <h4>{{ item.name }}</h4>
                         <p>{{ item.description }}</p>
