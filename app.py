@@ -24,7 +24,7 @@ session = DBSession()
 @app.route('/login')
 def showLogin():
     state = ''.join(
-        random.choice(string.ascii_uppercase + string.digits) for x in range(32))
+        random.choice(string.ascii_uppercase + string.digits) for x in range(3))
     login_session['state'] = state
     return render_template('login.html', STATE=state)
 
@@ -261,27 +261,25 @@ def deleteCategory(category_name):
         return render_template('deletecategory.html',
                                 category=categoryToDelete)
 
-@app.route('/catalog/<path:category_id>/<path:item_name>/delete', methods=['GET', 'POST'])
+@app.route('/<path:item_name>/delete', methods=['GET', 'POST'])
 @login_required
-def deleteItem(category_id, item_name):
-    category = session.query(Category).filter_by(id=category_id).first()
+def deleteItem(item_name):
     itemToDelete = session.query(Items).filter_by(name=item_name).first()
     user = getUserInfo(login_session['user_id'])
     if request.method =='POST':
         session.delete(itemToDelete)
         session.commit()
         flash('Item Successfully Deleted! '+itemToDelete.name)
-        return redirect(url_for('showCategory',
-                                category_name=category.name))
+        return redirect(url_for('showCatalog'))
     else:
         return render_template('deleteitem.html',
                                 item=itemToDelete)
 
 
-@app.route('/catalog/<path:category_id>/<path:item_name>/edit', methods=['GET', 'POST'])
+@app.route('/<path:item_name>/edit', methods=['GET', 'POST'])
 @login_required
-def editItem(category_id, item_name):
-    category = session.query(Category).filter_by(id=category_id).first()
+def editItem(item_name):
+    categories = session.query(Category).all()
     editedItem = session.query(Items).filter_by(name=item_name).one()
     user = getUserInfo(login_session['user_id'])
     if request.method == 'POST':
