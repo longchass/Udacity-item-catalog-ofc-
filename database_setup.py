@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import create_engine
 
-
+engine=create_engine('postgresql://catalog:password@localhost/catalog')
 Base = declarative_base()
 
 
@@ -56,7 +56,5 @@ class Items(Base):
             'category'      : self.category.name
         }
 
-
-engine = create_engine('sqlite:///catalog.db')
 
 Base.metadata.create_all(engine)
